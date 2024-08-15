@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fancy Radio Web App</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        .container {
+            text-align: center;
+        }
+        .animation {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #61dafb, #21a1f1);
+            animation: pulse 1.5s infinite;
+            margin-bottom: 30px;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button {
+            padding: 12px 25px;
+            border: none;
+            background-color: #21a1f1;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #61dafb;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        #player {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="animation"></div>
+        <div class="controls">
+            <button id="playPauseBtn">Pause</button>
+            <button id="volumeUpBtn">Volume Up</button>
+            <button id="volumeDownBtn">Volume Down</button>
+        </div>
+    </div>
+
+    <div id="player"></div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        let isPlaying = true;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: 'ik8Lsn4GqII',
+                playerVars: {
+                    listType: 'playlist',
+                    list: 'PLaq1Za1A2ZfurxRqn7qmbAEpcOQmbfCQe',
+                    autoplay: 1,
+                    loop: 1,
+                    playlist: 'ik8Lsn4GqII'
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                player.playVideo();
+            }
+        }
+
+        document.getElementById('playPauseBtn').addEventListener('click', function() {
+            if (isPlaying) {
+                player.pauseVideo();
+                this.textContent = 'Resume';
+            } else {
+                player.playVideo();
+                this.textContent = 'Pause';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        document.getElementById('volumeUpBtn').addEventListener('click', function() {
+            let currentVolume = player.getVolume();
+            if (currentVolume < 100) {
+                player.setVolume(currentVolume + 10);
+            }
+        });
+
+        document.getElementById('volumeDownBtn').addEventListener('click', function() {
+            let currentVolume = player.getVolume();
+            if (currentVolume > 0) {
+                player.setVolume(currentVolume - 10);
+            }
+        });
+    </script>
+</body>
+</html>
